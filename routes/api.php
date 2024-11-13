@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TodoListController;
+use App\Models\TodoList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,9 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['controller' => TodoListController::class], function () {
+    // Route::apiResource('todo-list', TodoListController::class);
     Route::get('/todo-list', 'index')->name('todo-list.index');
     Route::get('/todo-list/{list}', 'show')->name('todo-list.show');
     Route::post('/todo-list', 'store')->name('todo-list.store');
-    // Route::delete('/todo-list/{list}', 'destroy')->name('todo-list.destroy');
+    Route::patch('/todo-list/{list}', 'update')->name('todo-list.update');
+    Route::delete('/todo-list/{list}', 'destroy')->name('todo-list.destroy');
 });
 
