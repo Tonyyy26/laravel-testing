@@ -26,7 +26,9 @@ Route::group(['controller' => TodoListController::class], function () {
 });
 
 Route::group(['controller' => TasksController::class], function() {
-    Route::apiResource('tasks', TasksController::class);
+    Route::apiResource('todo-list.tasks', TasksController::class)
+        ->except('show')
+        ->shallow();
 });
 
 
