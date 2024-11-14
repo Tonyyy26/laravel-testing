@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TodoListController;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
@@ -24,5 +25,8 @@ Route::group(['controller' => TodoListController::class], function () {
     Route::apiResource('todo-list', TodoListController::class);
 });
 
-// Route::apiResource('tasks')
+Route::group(['controller' => TasksController::class], function() {
+    Route::apiResource('tasks', TasksController::class);
+});
+
 
