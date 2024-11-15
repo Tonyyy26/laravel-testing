@@ -17,10 +17,12 @@ class TasksFactory extends Factory
      */
     public function definition(): array
     {
+        $todoListIds = TodoList::pluck('id')->toArray();
+
         return [
             'title'       => $this->faker->sentence(),
-            'todo_list_id' => function() {
-                return TodoList::factory()->create()->id;
+            'todo_list_id' => function() use ($todoListIds) {
+                return $todoListIds[array_rand($todoListIds)];
             }
         ];
     }

@@ -63,4 +63,15 @@ class TasksTest extends TestCase
          //assert
         $this->assertDatabaseHas('tasks', ['title' => 'updated title']);
     }
+
+    public function test_a_task_status_can_be_changed()
+    {
+        $task = $this->createTasks();
+
+        $this->patchJson(
+            route('tasks.update', $task->id),
+            ['status' => Tasks::STARTED]
+        );
+        $this->assertDatabaseHas('tasks', ['status' => Tasks::STARTED]);
+    }
 }
