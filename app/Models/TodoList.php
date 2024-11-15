@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TodoList extends Model
 {
@@ -13,8 +14,8 @@ class TodoList extends Model
         'name'
     ];
 
-    // public function tasks()
-    // {
-    //     return $this->hasMany(Tasks::class);
-    // }
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Tasks::class);
+    }
 }

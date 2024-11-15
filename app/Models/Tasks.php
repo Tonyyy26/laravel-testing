@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tasks extends Model
 {
@@ -13,4 +14,9 @@ class Tasks extends Model
         'todo_list_id',
         'title',
     ];
+
+    public function todoList(): BelongsTo
+    {
+        return $this->belongsTo(TodoList::class);
+    }
 }
