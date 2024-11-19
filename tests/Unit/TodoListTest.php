@@ -20,4 +20,15 @@ class TodoListTest extends TestCase
 
         $this->assertInstanceOf(Tasks::class, $list->tasks->first());
     }
+
+    public function test_if_todo_list_is_deleted_then_all_its_tasks_will_be_deleted()
+    {
+        $list = $this->createTodoList();
+        $task = $this->createTasks(['todo_list_id' => $list->id]);
+
+        $list->delete();
+
+        $this->assertDatabaseMissing('todo_lists', ['id' => $list->id]);
+        $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+    }
 }
