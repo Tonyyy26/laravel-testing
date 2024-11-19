@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TodoListController;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +21,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group(['controller' => RegisterController::class], function() {
+    // Route::apiResource('register', RegisterController::class);
+    Route::post('/register', RegisterController::class)
+        ->name('user.register');
 });
 
 Route::group(['controller' => TodoListController::class], function () {
