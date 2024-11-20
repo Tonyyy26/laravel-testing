@@ -47,7 +47,13 @@ class TasksTest extends TestCase
 
     public function test_delete_a_task_from_database()
     {
-        $task = $this->createTasks();
+        $list = $this->createTodoList();
+        $task = $this->createTasks([
+            'todo_list_id' => $list->id,
+            'title' => 'test task',
+            'status' => Tasks::NOT_STARTED
+        ]);
+
         $this->deleteJson(route('tasks.destroy', $task->id))
             ->assertNoContent();
         $this->assertDatabaseMissing('tasks', ['title' => $task->title]);
@@ -57,8 +63,13 @@ class TasksTest extends TestCase
     {
          // preparation
          $task = $this->createTasks();
+
          // action
-        $this->patchJson(route('tasks.update', $task->id), ['title' => 'updated title'])
+        $this->patchJson(route('tasks.update', $task->id), [
+            'todo_list_id' => 1,
+            'title' => 'updated title',
+            'status' => Tasks::STARTED
+            ])
             ->assertOk();
          //assert
         $this->assertDatabaseHas('tasks', ['title' => 'updated title']);
