@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TodoListRequest;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class TodoListController extends Controller
 {
     public function index() {
-        $lists = TodoList::all();
-        return response($lists);
+        return response(auth()
+            ->user()
+            ->todoLists);
     }
 
     public function show(TodoList $todoList) {
@@ -20,8 +22,10 @@ class TodoListController extends Controller
 
     public function store(TodoListRequest $request) {
         $request->validate(['name' => ['required']]);
-        
-        return TodoList::create($request->all());
+        return auth()
+            ->user()
+            ->todoLists()
+            ->create($request->all());
     }
 
     public function update(TodoList $todoList, TodoListRequest $request) {

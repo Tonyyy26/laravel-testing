@@ -19,18 +19,20 @@ class TodoListTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->authUser();
-        $this->list = $this->createTodoList(['name' => 'my list']);
+        $user = $this->authUser();
+        $this->list = $this->createTodoList([
+            'name' => 'my list',
+            'user_id' => $user->id
+        ]);
     }
 
-    /**
-     * A basic feature test example.
-     */
     public function test_fetch_todo_list(): void
     {
-        $this->getJson(route('todo-list.index'))
-            ->assertOk()
-            ->json();
+        $this->createTodoList();
+        $response = $this->getJson(route('todo-list.index'));
+       
+        $this->assertEquals(1, count($response->json()));
+        $this->assertEquals('my list', $response->json()[0]['name']);
     }
 
     public function test_fetch_single_todo_list()
@@ -60,13 +62,6 @@ class TodoListTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_delete_todo_list()
-    {
-        $this->deleteJson(route('todo-list.destroy', $this->list->id))
-            ->assertNoContent();
-        $this->assertDatabaseMissing('todo_lists', ['name' => $this->list->name]);
-    }
-
     public function test_update_todo_list()
     {
         $this->patchJson(route('todo-list.update', $this->list->id),
@@ -81,5 +76,12 @@ class TodoListTest extends TestCase
         $this->patchJson(route('todo-list.update', $this->list->id))
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['name']);
+    }
+
+    public function test_delete_todo_list()
+    {
+        $this->deleteJson(route('todo-list.destroy', $this->list->id))
+            ->assertNoContent();
+        $this->assertDatabaseMissing('todo_lists', ['name' => $this->list->name]);
     }
 }
