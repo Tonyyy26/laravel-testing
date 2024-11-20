@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TodoListController;
 use App\Models\TodoList;
@@ -33,6 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('todo-list.tasks', TasksController::class)
             ->except('show')
             ->shallow();
+    });
+
+    Route::group(['controller' => LabelController::class], function () {
+        Route::apiResource('label', LabelController::class);
     });
 });
 Route::group(['controller' => LoginController::class], function() {

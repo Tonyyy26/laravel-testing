@@ -17,6 +17,7 @@ class Tasks extends Model
     protected $fillable = [
         'todo_list_id',
         'title',
+        'description',
         'status'
     ];
 

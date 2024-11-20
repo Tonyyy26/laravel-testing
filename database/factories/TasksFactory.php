@@ -23,7 +23,8 @@ class TasksFactory extends Factory
             'title'       => $this->faker->sentence(),
             'todo_list_id' => function() use ($todoListIds) {
                 return $todoListIds[array_rand($todoListIds)];
-            }
+            },
+            'description' => $this->faker->paragraph(),
         ];
     }
 }
