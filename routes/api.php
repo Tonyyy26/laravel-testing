@@ -24,6 +24,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::group(['controller' => TodoListController::class], function () {
+        Route::apiResource('todo-list', TodoListController::class);
+    });
+    
+    Route::group(['controller' => TasksController::class], function() {
+        Route::apiResource('todo-list.tasks', TasksController::class)
+            ->except('show')
+            ->shallow();
+    });
+});
 Route::group(['controller' => LoginController::class], function() {
     Route::post('login', LoginController::class)
         ->name('user.login');
@@ -33,15 +44,3 @@ Route::group(['controller' => RegisterController::class], function() {
     Route::post('register', RegisterController::class)
         ->name('user.register');
 });
-
-Route::group(['controller' => TodoListController::class], function () {
-    Route::apiResource('todo-list', TodoListController::class);
-});
-
-Route::group(['controller' => TasksController::class], function() {
-    Route::apiResource('todo-list.tasks', TasksController::class)
-        ->except('show')
-        ->shallow();
-});
-
-
