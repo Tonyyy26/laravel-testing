@@ -54,7 +54,22 @@ class ServiceTest extends TestCase
             'token' => '{"access_token":"fake-token"}',
         ]);
 
-        // $webService = WebService::first();
-        // $this->assertNotNull($this->user->webServices->first()->token);
+    }
+
+    public function test_data_of_a_week_can_be_stored_on_google_drive()
+    {
+        $this->mock(Client::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setAccessToken');
+            $mock->shouldReceive('getLogger->info');
+            $mock->shouldReceive('getUniverseDomain');
+            $mock->shouldReceive('shouldDefer');
+            $mock->shouldReceive('execute');
+        });
+
+        $webService = $this->createWebService();
+        $this->postJson(route('web-service.store', $webService->id))
+            ->assertCreated();
+
+
     }
 }

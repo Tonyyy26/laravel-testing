@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WebService extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'token' => 'json'
+    ];
+
     protected $fillable = [
         'user_id',
         'name',
