@@ -23,20 +23,23 @@ class ServiceTest extends TestCase
 
     public function test_a_user_can_connect_to_a_service_and_token_is_stored(): void
     {
+        $this->mock(Client::class, function (MockInterface $mock) {
+            $mock->shouldReceive('setScopes');
+            $mock->shouldReceive('createAuthUrl')
+                ->andReturn('http://127.0.0.1:8000/');
+        });
+
         $response = $this->getJson(route('web-service.connect', 'google-drive'))
             ->assertOk()
             ->json();
         
+        $this->assertEquals('http://127.0.0.1:8000/', $response['url']);
         $this->assertNotNull($response['url']);
     }
 
     public function test_service_callback_will_store_token()
     {
-
         $this->mock(Client::class, function (MockInterface $mock) {
-            $mock->shouldReceive('setClientId')->once();
-            $mock->shouldReceive('setClientSecret')->once();
-            $mock->shouldReceive('setRedirectUri')->once();
             $mock->shouldReceive('fetchAccessTokenWithAuthCode')
             ->andReturn('fake-token');
         });

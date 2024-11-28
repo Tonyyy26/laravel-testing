@@ -8,30 +8,17 @@ use Illuminate\Http\Request;
 
 class WebServiceController extends Controller
 {
-    public function connect($webService)
+    public function connect($webService, Client $client)
     {
         if ($webService === 'google-drive') {
-            $client = new Client();
-            $config = config('services.google');
-
-            $client->setClientId($config['client_id']);
-            $client->setClientSecret($config['client_secret']);
-            $client->setRedirectUri($config['redirect_uri']);
-            $client->setScopes($config['drive_scopes']);
+            $client->setScopes(config('services.google.drive_scopes'));
 
             return response(['url' => $client->createAuthUrl()]);
         }
     }
 
-    public function callback(Request $request)
+    public function callback(Request $request, Client $client)
     {
-        $client = app(Client::class);
-        $config = config('services.google');
-        
-        $client->setClientId($config['client_id']);
-        $client->setClientSecret($config['client_secret']);
-        $client->setRedirectUri($config['redirect_uri']);
-
         $access_token = $client->fetchAccessTokenWithAuthCode($request->code);
 
         return WebService::create([
