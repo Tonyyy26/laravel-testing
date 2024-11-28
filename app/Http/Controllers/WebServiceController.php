@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tasks;
 use App\Models\WebService;
 use Google\Client;
 use Google\Service\Drive;
 use Google\Service\Drive\DriveFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
+use ZipArchive;
 
 class WebServiceController extends Controller
 {
@@ -27,38 +30,50 @@ class WebServiceController extends Controller
         return WebService::create([
             'user_id' => auth()->user()->id,
             'name'    => 'google-drive',
-            'token'   => ['access_token'  => $access_token]
+            'token'   => json_encode([
+                'access_token'  => $access_token
+            ])
         ]);
     }
 
     public function store(Request $request, WebService $webService, Client $client)
     {
-        $accessToken = $webService->token['access_token'];
+        // Need to fetch last 7 days of tasks
+        $tasks = Tasks::where('created_at', '>=', now()->subDays(7))->get();
+
+        // Create a json file with this data
+        $jsonFileName = 'task_dump.json';
+        Storage::put("/public/temp/$jsonFileName", $tasks->toJson());
+
+        // Create a zip file this json file
+        $zip = new ZipArchive();
+        $zipFileName = storage_path('app/public/temp/' . now()->timestamp . '-task.zip');
+
+        if ($zip->open($zipFileName, ZipArchive::CREATE) === true) {
+            $filePath = storage_path('app/public/temp/' . $jsonFileName);
+            $zip->addFile($filePath, $jsonFileName);
+        }
+        $zip->close();
+
+        // Send this zip to drive
+        $token = json_decode($webService->token, true);
+        $accessToken = $token['access_token']['access_token'];
         $client->setAccessToken($accessToken);
 
         $service = new Drive($client);
         $file = new DriveFile();
-    
-        // We'll setup an empty 1MB file to upload.
-        DEFINE("TESTFILE", 'testfile-small.txt');
-        if (!file_exists(TESTFILE)) {
-            $fh = fopen(TESTFILE, 'w');
-            fseek($fh, 1024 * 1024);
-            fwrite($fh, "!", 1);
-            fclose($fh);
-        }
-    
+
         // Now lets try and send the metadata as well using multipart!
-        $file->setName("Hello World!");
+        $file->setName("HelloWorld.zip");
         $service->files->create(
             $file,
             [
-                'data' => file_get_contents(TESTFILE),
+                'data' => file_get_contents($zipFileName),
                 'mimeType' => 'application/octet-stream',
                 'uploadType' => 'multipart'
             ]
         );
-
+        
         return response('Uploaded', Response::HTTP_CREATED);
     }
 }

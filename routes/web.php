@@ -33,13 +33,14 @@ Route::get('/drive', function () {
 });
 
 Route::get('/google-drive/callback', function () {
-    $client = new Client();
-    $client->setClientId(config('googledrive.client_id'));
-    $client->setClientSecret(config('googledrive.client_secret'));
-    $client->setRedirectUri(config('googledrive.callback'));
-    $code = request('code');
+    return request('code');
+    // $client = new Client();
+    // $client->setClientId(config('googledrive.client_id'));
+    // $client->setClientSecret(config('googledrive.client_secret'));
+    // $client->setRedirectUri(config('googledrive.callback'));
+    // $code = request('code');
 
-    return $client->fetchAccessTokenWithAuthCode($code);
+    // return $client->fetchAccessTokenWithAuthCode($code);
 });
 
 Route::get('/upload', function () {

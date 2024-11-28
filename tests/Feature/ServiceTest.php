@@ -46,18 +46,24 @@ class ServiceTest extends TestCase
 
         $this->postJson(route('web-service.callback'), [
             'code' => 'dummyCode',
-        ])
-            ->assertCreated();
+        ])->assertCreated();
 
         $this->assertDatabaseHas('web_services', [
             'user_id' => $this->user->id,
-            'token' => '{"access_token":"fake-token"}',
+            'token' => '"{\"access_token\":\"fake-token\"}"',
         ]);
 
     }
 
     public function test_data_of_a_week_can_be_stored_on_google_drive()
     {
+        $this->createTasks(['created_at' => now()->subDays(2)]);
+        $this->createTasks(['created_at' => now()->subDays(3)]);
+        $this->createTasks(['created_at' => now()->subDays(4)]);
+        $this->createTasks(['created_at' => now()->subDays(6)]);
+
+        $this->createTasks(['created_at' => now()->subDays(10)]);
+        
         $this->mock(Client::class, function (MockInterface $mock) {
             $mock->shouldReceive('setAccessToken');
             $mock->shouldReceive('getLogger->info');
