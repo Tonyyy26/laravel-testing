@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\LabelController;
+use App\Http\Controllers\LabelController;;
 use App\Http\Controllers\TasksController;
 use App\Http\Controllers\TodoListController;
+use App\Http\Controllers\WebServiceController;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::group(['controller' => LabelController::class], function () {
         Route::apiResource('label', LabelController::class);
+    });
+
+    Route::group(['controller' => WebServiceController::class], function () {
+        Route::get('/web-service/connect/{web_service}', 'connect')->name('web-service.connect');
+        Route::post('/web-service/callback', 'callback')->name('web-service.callback');
     });
 });
 Route::group(['controller' => LoginController::class], function() {

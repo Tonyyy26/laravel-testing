@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Label::class);
     }
+
+    public function webServices(): HasMany
+    {
+        return $this->hasMany(WebService::class);
+    }
 }

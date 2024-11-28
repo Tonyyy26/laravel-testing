@@ -29,7 +29,7 @@ Route::get('/drive', function () {
         config('googledrive.scope_drive'),
         config('googledrive.scope_drive_file'),
     ]);
-    return redirect($client->createAuthUrl());
+    return $client->createAuthUrl();
 });
 
 Route::get('/google-drive/callback', function () {
