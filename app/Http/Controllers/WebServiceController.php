@@ -25,15 +25,14 @@ class WebServiceController extends Controller
 
     public function callback(Request $request)
     {
-        $client = new Client();
+        $client = app(Client::class);
         $config = config('services.google');
         
         $client->setClientId($config['client_id']);
         $client->setClientSecret($config['client_secret']);
         $client->setRedirectUri($config['redirect_uri']);
 
-        $code = $request->code;
-        $access_token = $client->fetchAccessTokenWithAuthCode($code);
+        $access_token = $client->fetchAccessTokenWithAuthCode($request->code);
 
         return WebService::create([
             'user_id' => auth()->user()->id,

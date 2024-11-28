@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('users', 'id')
                 ->onDelete('cascade');
             $table->string('name');
-            $table->json('code')->nullable();
+            $table->json('token');
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ class WebService extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'code'
+        'token'
     ];
 
     public function user(): BelongsTo
