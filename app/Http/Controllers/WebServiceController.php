@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TasksResource;
 use App\Models\Tasks;
 use App\Models\WebService;
 use Google\Client;
@@ -30,9 +31,7 @@ class WebServiceController extends Controller
         return WebService::create([
             'user_id' => auth()->user()->id,
             'name'    => 'google-drive',
-            'token'   => json_encode([
-                'access_token'  => $access_token
-            ])
+            'token'   => $access_token
         ]);
     }
 
@@ -43,7 +42,7 @@ class WebServiceController extends Controller
 
         // Create a json file with this data
         $jsonFileName = 'task_dump.json';
-        Storage::put("/public/temp/$jsonFileName", $tasks->toJson());
+        Storage::put("/public/temp/$jsonFileName", TasksResource::collection($tasks)->toJson());
 
         // Create a zip file this json file
         $zip = new ZipArchive();
@@ -56,8 +55,7 @@ class WebServiceController extends Controller
         $zip->close();
 
         // Send this zip to drive
-        $token = json_decode($webService->token, true);
-        $accessToken = $token['access_token']['access_token'];
+        $accessToken = $webService->token['access_token'];
         $client->setAccessToken($accessToken);
 
         $service = new Drive($client);
@@ -73,7 +71,7 @@ class WebServiceController extends Controller
                 'uploadType' => 'multipart'
             ]
         );
-        
+
         return response('Uploaded', Response::HTTP_CREATED);
     }
 }

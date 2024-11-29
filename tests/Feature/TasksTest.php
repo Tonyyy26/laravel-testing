@@ -28,18 +28,17 @@ class TasksTest extends TestCase
         // preparation
         $list1 = $this->createTodoList(['name' => 'test list']);
         $list2 = $this->createTodoList(['name' => 'test list2']);
-        
+
         // create tasks associated with the todo lists
         $task = $this->createTasks(['todo_list_id' => $list1->id]);
         $this->createTasks(['todo_list_id' => $list2->id]);
         // action
         $response = $this->getJson(route('todo-list.tasks.index', $list1->id))
             ->assertOk()
-            ->json();
+            ->json('data');
         // assertion
         $this->assertEquals(1, count($response));
         $this->assertEquals($task->title, $response[0]['title']);
-        $this->assertEquals($response[0]['todo_list_id'], $list1->id);
     }
 
     public function test_store_a_task_for_a_todo_list()

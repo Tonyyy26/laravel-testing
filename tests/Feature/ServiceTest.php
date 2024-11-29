@@ -14,7 +14,7 @@ class ServiceTest extends TestCase
 {
     use DatabaseTransactions;
     protected $user;
-    
+
     public function setUp(): void
     {
         parent::setUp();
@@ -32,7 +32,7 @@ class ServiceTest extends TestCase
         $response = $this->getJson(route('web-service.connect', 'google-drive'))
             ->assertOk()
             ->json();
-        
+
         $this->assertEquals('http://127.0.0.1:8000/', $response['url']);
         $this->assertNotNull($response['url']);
     }
@@ -41,7 +41,7 @@ class ServiceTest extends TestCase
     {
         $this->mock(Client::class, function (MockInterface $mock) {
             $mock->shouldReceive('fetchAccessTokenWithAuthCode')
-            ->andReturn('fake-token');
+            ->andReturn(['access_token' => 'fake-token']);
         });
 
         $this->postJson(route('web-service.callback'), [
@@ -50,7 +50,7 @@ class ServiceTest extends TestCase
 
         $this->assertDatabaseHas('web_services', [
             'user_id' => $this->user->id,
-            'token' => '"{\"access_token\":\"fake-token\"}"',
+            'token' => json_encode(['access_token' => 'fake-token']),
         ]);
 
     }
@@ -63,7 +63,7 @@ class ServiceTest extends TestCase
         $this->createTasks(['created_at' => now()->subDays(6)]);
 
         $this->createTasks(['created_at' => now()->subDays(10)]);
-        
+
         $this->mock(Client::class, function (MockInterface $mock) {
             $mock->shouldReceive('setAccessToken');
             $mock->shouldReceive('getLogger->info');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
+use App\Http\Resources\TasksResource;
 use App\Models\Tasks;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
@@ -12,18 +13,19 @@ class TasksController extends Controller
 {
     public function index(TodoList $todoList)
     {
-        return response($todoList->tasks);
+        return TasksResource::collection($todoList->tasks);
     }
 
     public function store(Request $request, TodoList $todoList)
     {
-        return $todoList->tasks()->create($request->all());
+        $task = $todoList->tasks()->create($request->all());
+        return new TasksResource($task);
     }
 
     public function update(Tasks $task, Request $request)
     {
         $task->update($request->all());
-        return response($task);
+        return new TasksResource($task);
     }
 
     public function destroy(Tasks $task)
